@@ -86,7 +86,7 @@ i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c);
  * @attention   7bits address must be passed 
  *
  */
-i2c_err_t   i2c_write(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t NbBytes);
+i2c_err_t   i2c_write(i2c_desc_t *pi2c, uint8_t i2c_Addr,const uint8_t *pByte,uint8_t NbBytes);
  
  /**
  * @brief       Read NbBytes on the I2Cbus
