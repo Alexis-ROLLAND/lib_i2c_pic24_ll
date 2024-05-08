@@ -12,10 +12,7 @@
 
 /* Directives de compilation - Macros		*/
 
-
 /* Déclarations des variables globales 	*/
-
-
 
 /*	Implémentation du code */
 i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c)
@@ -76,25 +73,20 @@ i2c_err_t   i2c_write(i2c_desc_t *pi2c, uint8_t i2c_Addr,const uint8_t *pByte,ui
     
     // Emission adresse en écriture
     Res = I2C_PutByte(pi2c, ((i2c_Addr<<1) & 0xFE));
-    if (Res != I2C_OK)
-        {
+    if (Res != I2C_OK){
         I2C_Stop(pi2c);
         return I2C_NO_ACK;
     }
     
-    for (i=0;i<NbBytes;i++)
-    {
+    for (i=0;i<NbBytes;i++){
         Res = I2C_PutByte(pi2c, pByte[i]);
-        if (Res != I2C_OK)
-            {
+        if (Res != I2C_OK){
             I2C_Stop(pi2c);
             return I2C_NO_ACK;
         }
     }
     I2C_Stop(pi2c);
     return I2C_OK;
-    
-    
 }
 //----------------------------------------------------------------------------
 i2c_err_t   i2c_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t NbBytes){
@@ -105,27 +97,23 @@ i2c_err_t   i2c_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t N
     if (Res != I2C_OK) return Res;
     
     Res = I2C_PutByte(pi2c, ((i2c_Addr<<1) | 0x01));
-    if (Res != I2C_OK)
-        {
+    if (Res != I2C_OK){
         I2C_Stop(pi2c);
         return I2C_NO_ACK;
     }
 
     Index = 0;
-    while(Index < (NbBytes - 1))
-        {
+    while(Index < (NbBytes - 1)){
         Res = I2C_GetByte(pi2c, &pByte[Index],I2C_SET_ACK);
         Index++;
-        if (Res != I2C_OK)
-            {
+        if (Res != I2C_OK){
             I2C_Stop(pi2c);
             return Res;  // Réception ACK ?
             }
         }
     
     Res = I2C_GetByte(pi2c,&pByte[Index],I2C_SET_NO_ACK);    // Dernier octet lu sans ACQ 
-    if (Res != I2C_OK)
-    {
+    if (Res != I2C_OK){
         I2C_Stop(pi2c);
         return Res;  // Réception ACK ?
     }
@@ -135,7 +123,7 @@ i2c_err_t   i2c_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t N
     return I2C_OK;
 }
 //----------------------------------------------------------------------------
-i2c_err_t  i2c_write_then_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByteWR,uint8_t NbBytes2WR,uint8_t *pByteRD,uint8_t NbBytes2RD){
+i2c_err_t  i2c_write_then_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,const uint8_t *pByteWR,uint8_t NbBytes2WR,uint8_t *pByteRD,uint8_t NbBytes2RD){
     i2c_err_t   Res;    
     uint8_t     Index;
 
@@ -144,17 +132,14 @@ i2c_err_t  i2c_write_then_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte
     
     // Emission adresse en écriture
     Res = I2C_PutByte(pi2c, ((i2c_Addr<<1) & 0xFE));
-    if (Res != I2C_OK)
-        {
+    if (Res != I2C_OK){
         I2C_Stop(pi2c);
         return I2C_NO_ACK;
         }
     
-    for (Index=0;Index<NbBytes2WR;Index++)
-    {
+    for (Index=0;Index<NbBytes2WR;Index++){
         Res = I2C_PutByte(pi2c, pByteWR[Index]);
-        if (Res != I2C_OK)
-            {
+        if (Res != I2C_OK){
             I2C_Stop(pi2c);
             return I2C_NO_ACK;
             }
@@ -163,27 +148,23 @@ i2c_err_t  i2c_write_then_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte
     I2C_ReStart(pi2c);    
     
     Res = I2C_PutByte(pi2c, ((i2c_Addr << 1) | 0x01));
-    if (Res != I2C_OK)
-        {
+    if (Res != I2C_OK){
         I2C_Stop(pi2c);
         return I2C_NO_ACK;
         }
 
     Index = 0;
-    while(Index < (NbBytes2RD - 1))
-        {
+    while(Index < (NbBytes2RD - 1)){
         Res = I2C_GetByte(pi2c, &pByteRD[Index],I2C_SET_ACK);
         Index++;
-        if (Res != I2C_OK)
-            {
+        if (Res != I2C_OK){
             I2C_Stop(pi2c);
             return Res;  // Réception ACK ?
             }
         }
     
     Res = I2C_GetByte(pi2c,&pByteRD[Index],I2C_SET_NO_ACK);    // Dernier octet lu sans ACQ (cf doc))
-    if (Res != I2C_OK)
-        {
+    if (Res != I2C_OK){
         I2C_Stop(pi2c);
         return Res;  // Réception ACK ?
         }
@@ -195,8 +176,7 @@ i2c_err_t  i2c_write_then_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte
 //----------------------------------------------------------------------------
 i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte){
     *(pi2c->pI2CxTRN) = Byte;   // Chargement registre d'émission
-    switch (pi2c->i2cID)
-    {
+    switch (pi2c->i2cID){
         case _I2C1:
             while(!IFS1bits.MI2C1IF);   // Attente fin émission
                        
@@ -217,9 +197,7 @@ i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte){
                 }
              IFS3bits.MI2C2IF = 0;       // Raz Flag
             break;
-        
-        
-        
+               
         default: return I2C_UNKNOWN_MODULE;
     }
     return I2C_OK;
@@ -263,7 +241,7 @@ i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK){
     return I2C_OK;
 }
 //----------------------------------------------------------------------------
-i2c_err_t   I2C_Start(i2c_desc_t *pi2c){
+i2c_err_t   I2C_Start(const i2c_desc_t *pi2c){
     switch (pi2c->i2cID)
     {
         case _I2C1:
@@ -282,7 +260,7 @@ i2c_err_t   I2C_Start(i2c_desc_t *pi2c){
     return I2C_OK;
 }
         
-i2c_err_t   I2C_Stop(i2c_desc_t *pi2c){
+i2c_err_t   I2C_Stop(const i2c_desc_t *pi2c){
     switch (pi2c->i2cID)
     {
         case _I2C1:
@@ -301,7 +279,7 @@ i2c_err_t   I2C_Stop(i2c_desc_t *pi2c){
     return I2C_OK;
 }
 
-i2c_err_t   I2C_ReStart(i2c_desc_t *pi2c){
+i2c_err_t   I2C_ReStart(const i2c_desc_t *pi2c){
     switch (pi2c->i2cID)
     {
         case _I2C1:
