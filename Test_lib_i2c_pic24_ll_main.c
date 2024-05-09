@@ -3,8 +3,6 @@
  * @author 	Alexis ROLLAND
  * @date	2024/05
  * @brief 	
- *  
- *
  */
 
 #include "lib_test_lib_i2c_pic24_ll.h"   // Inclusion du fichier .h "Applicatif" renommé
@@ -67,16 +65,16 @@ int main(void)
     Res = i2c_write(&myI2C, RGBLED_ADDR, Buffer, 2);
     if (Res != I2C_OK) error_handler();
     
-    Buffer[0] = RED_REG;
+    Buffer[0] = BLUE_REG;
     Buffer[1] = 0x00;
     while(1)
     {
-        __delay_ms(200);
+        __delay_ms(100);
         LATA=Buffer[1];
         
        Res = i2c_write(&myI2C, RGBLED_ADDR, Buffer, 2);
        if (Res != I2C_OK) error_handler();
-        Buffer[1]++;
+            Buffer[1]++;
 
         
     }

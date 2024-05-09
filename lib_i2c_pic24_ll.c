@@ -3,12 +3,9 @@
  * @author 	Alexis ROLLAND
  * @date	2022-03
  * @brief 	Low level library for I2C / PIC24 (PIC24FJ128GA010 fully tested)
- *  
- *
  */
 
-
-#include "lib_i2c_pic24_ll.h" // Inclusion du fichier .h  renommé
+#include "lib_i2c_pic24_ll.h" // 
 
 /* Directives de compilation - Macros		*/
 
@@ -21,18 +18,22 @@ i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c)
     
     switch(i2c_id){
         case _I2C1:
-            pI2c->pI2CxBRG = (uint16_t*)&I2C1BRG;
-            pI2c->pI2CxCON = (uint16_t*)&I2C1CON;
-            pI2c->pI2CxSTAT = (uint16_t*)&I2C1STAT;
-            pI2c->pI2CxTRN = (uint16_t*)&I2C1TRN;
-            pI2c->pI2CxRCV = (uint16_t*)&I2C1RCV;
+            pI2c->pI2CxBRG = (regAddr)&I2C1BRG;
+            pI2c->pI2CxCON = (regAddr)&I2C1CON;
+            pI2c->pI2CxSTAT = (regAddr)&I2C1STAT;
+            pI2c->pI2CxTRN = (regAddr)&I2C1TRN;
+            pI2c->pI2CxRCV = (regAddr)&I2C1RCV;
+            pI2c->pIFSREG = (regAddr)&IFS1;
+            pI2c->IFS_MASK = I2C1IF_MASK;
             break;
         case _I2C2:
-            pI2c->pI2CxBRG = (uint16_t*)&I2C2BRG;
-            pI2c->pI2CxCON = (uint16_t*)&I2C2CON;
-            pI2c->pI2CxSTAT = (uint16_t*)&I2C2STAT;
-            pI2c->pI2CxTRN = (uint16_t*)&I2C2TRN;
-            pI2c->pI2CxRCV = (uint16_t*)&I2C2RCV;
+            pI2c->pI2CxBRG = (regAddr)&I2C2BRG;
+            pI2c->pI2CxCON = (regAddr)&I2C2CON;
+            pI2c->pI2CxSTAT = (regAddr)&I2C2STAT;
+            pI2c->pI2CxTRN = (regAddr)&I2C2TRN;
+            pI2c->pI2CxRCV = (regAddr)&I2C2RCV;
+            pI2c->pIFSREG = (regAddr)&IFS3;
+            pI2c->IFS_MASK = I2C2IF_MASK;
             break;
         default:
             return I2C_UNKNOWN_MODULE;
@@ -41,26 +42,24 @@ i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c)
     
     pI2c->i2cID = i2c_id;
     
-    // Configuration effective
-    //------------------------------------------
-    // I2CBRG
+    /**
+     *  I2CBRG Register
+     */ 
     *(pI2c->pI2CxBRG) = pI2cCFG->i2cBRG_value;
     
-    //------------------------------------------
-    // I2CCON
+    /**
+     * I2CCON Register
+     */
     tmpReg = 0x0000;
-    
-    // I2CEN
-    tmpReg |= I2CEN_MASK;
-    
+    tmpReg |= I2CEN_MASK;       /**<     I2CEN  */
     *(pI2c->pI2CxCON) = tmpReg;
     
-    //------------------------------------------
-    // I2CSTAT
+    /**
+     * I2CSTAT Register
+     */
     tmpReg = 0x0000;
-    
     *(pI2c->pI2CxSTAT) = tmpReg;
-    //------------------------------------------
+    
     return I2C_OK;
 }
 //----------------------------------------------------------------------------
@@ -175,126 +174,56 @@ i2c_err_t  i2c_write_then_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,const uint8_t 
 }
 //----------------------------------------------------------------------------
 i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte){
-    *(pi2c->pI2CxTRN) = Byte;   // Chargement registre d'émission
-    switch (pi2c->i2cID){
-        case _I2C1:
-            while(!IFS1bits.MI2C1IF);   // Attente fin émission
-                       
-            if (I2C1STATbits.ACKSTAT != 0)
-                {
+    *(pi2c->pI2CxTRN) = Byte;       /**<    Chargement registre d'émission  */
+     
+    WaitIFS();                                              /**<     Attente fin émission   */
+    if ((*(pi2c->pI2CxSTAT) & ACKSTAT_MASK) != 0){          /**<     Check ACK  */                                    
                 I2C_Stop(pi2c);
                 return I2C_NO_ACK;
-                }
-            IFS1bits.MI2C1IF = 0;       // Raz Flag
-            break;
-        case _I2C2:
-            while(!IFS3bits.MI2C2IF);   // Attente fin émission
-                      
-            if (I2C2STATbits.ACKSTAT != 0)
-                {
-                I2C_Stop(pi2c);
-                return I2C_NO_ACK;
-                }
-             IFS3bits.MI2C2IF = 0;       // Raz Flag
-            break;
-               
-        default: return I2C_UNKNOWN_MODULE;
     }
+    ClrIFS();                                               /**<    Raz Flag    */
+    
     return I2C_OK;
     
 }
 //----------------------------------------------------------------------------
 i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK){
-    switch (pi2c->i2cID)
-    {
-        case _I2C1:
-            I2C1CONbits.ACKDT = EtatACK;    // type d'ACK à générer
-            
-            I2C1CONbits.RCEN = 1;           // Lancer lecture
-            while(!IFS1bits.MI2C1IF);       // Attente fin réception
-                        
-            *pByte = *(pi2c->pI2CxRCV);     // Lecture octet
-            while(!IFS1bits.MI2C1IF);               
-            IFS1bits.MI2C1IF = 0;           // Raz Flag
-            
-            I2C1CONbits.ACKEN = 1;          // Lancement génération ACK/NACK
-            while(!IFS1bits.MI2C1IF);               
-            IFS1bits.MI2C1IF = 0;           // Raz Flag
-                        
-            break;
-        case _I2C2:
-            I2C2CONbits.ACKDT = EtatACK;    // type d'ACK à générer
-            
-            I2C2CONbits.RCEN = 1;           // Lancer lecture
-            while(!IFS3bits.MI2C2IF);       // Attente fin réception
-                        
-            *pByte = *(pi2c->pI2CxRCV);     // Lecture octet
-            while(!IFS3bits.MI2C2IF);               
-            IFS3bits.MI2C2IF = 0;           // Raz Flag
-            
-            I2C2CONbits.ACKEN = 1;          // Lancement génération ACK/NACK
-            while(!IFS3bits.MI2C2IF);               
-            IFS3bits.MI2C2IF = 0;           // Raz Flag
-            break;        
-        default: break;
-    }
+    if (EtatACK == I2C_SET_ACK) (*(pi2c->pI2CxCON) &= ~ACKDT_MASK);     /**< Set ACK to be generated  */
+    else                        (*(pi2c->pI2CxCON) |= ACKDT_MASK);      /**< Set NACK to be generated  */
+    
+    *(pi2c->pI2CxCON) |= RCEN_MASK;                                     /**< Start Reading  */
+    WaitIFS();                                                          /**< Wait until end of reception    */
+    *pByte = *(pi2c->pI2CxRCV);                                         /**< Get received byte from Rx Register */
+    
+    WaitIFS();                                                          /**< Wait for ? */
+    ClrIFS();                                                           /**< Raz Flag   */
+    
+    *(pi2c->pI2CxCON) |= ACKEN_MASK;                                    /**< Start ACK/NACK generation  */
+    WaitIFS();                                                          /**< Wait for complete generation   */
+    ClrIFS();                                                           /**< RAZ flag   */
+         
     return I2C_OK;
 }
 //----------------------------------------------------------------------------
 i2c_err_t   I2C_Start(const i2c_desc_t *pi2c){
-    switch (pi2c->i2cID)
-    {
-        case _I2C1:
-            I2C1CONbits.SEN = 1;
-            while(!IFS1bits.MI2C1IF);   // Attente fin génération start
-            IFS1bits.MI2C1IF = 0;       // Raz Flag
-            break;
-        case _I2C2:
-            I2C2CONbits.SEN = 1;
-            while(!IFS3bits.MI2C2IF);   // Attente fin génération start
-            IFS3bits.MI2C2IF = 0;       // Raz Flag
-            break;
-               
-        default: return I2C_UNKNOWN_MODULE;
-    }
+    *pi2c->pI2CxCON |= SEN_MASK;                    /**< Generate START condition    */
+    WaitIFS();                                      /**< Wait end of START condition */
+    ClrIFS()                                        /**< Clear IFS bit  */
     return I2C_OK;
 }
-        
+//------------------------------------------------------------------------------        
 i2c_err_t   I2C_Stop(const i2c_desc_t *pi2c){
-    switch (pi2c->i2cID)
-    {
-        case _I2C1:
-            I2C1CONbits.PEN = 1;
-            while(!IFS1bits.MI2C1IF);   // Attente fin génération start
-            IFS1bits.MI2C1IF = 0;       // Raz Flag
-            break;
-        case _I2C2:
-            I2C2CONbits.PEN = 1;
-            while(!IFS3bits.MI2C2IF);   // Attente fin génération start
-            IFS3bits.MI2C2IF = 0;       // Raz Flag
-            break;
-               
-        default: return I2C_UNKNOWN_MODULE;
-    }
+    *pi2c->pI2CxCON |= PEN_MASK;                    /**< Generate STOP condition    */
+    WaitIFS();                                      /**< Wait end of STOP condition */
+    ClrIFS();                                       /**< Clear IFS bit  */
     return I2C_OK;
 }
-
+//------------------------------------------------------------------------------
 i2c_err_t   I2C_ReStart(const i2c_desc_t *pi2c){
-    switch (pi2c->i2cID)
-    {
-        case _I2C1:
-            I2C1CONbits.RSEN = 1;
-            while(!IFS1bits.MI2C1IF);   // Attente fin génération start
-            IFS1bits.MI2C1IF = 0;       // Raz Flag
-            break;
-        case _I2C2:
-            I2C2CONbits.RSEN = 1;
-            while(!IFS3bits.MI2C2IF);   // Attente fin génération start
-            IFS3bits.MI2C2IF = 0;       // Raz Flag
-            break;
-               
-        default: return I2C_UNKNOWN_MODULE;
-    }
+    *pi2c->pI2CxCON |= RSEN_MASK;                   /**< Generate RESTART condition    */
+    WaitIFS();                                      /**< Wait end of RESTART condition */
+    ClrIFS()                                        /**< Clear IFS bit  */
     return I2C_OK;
 }
-//----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
