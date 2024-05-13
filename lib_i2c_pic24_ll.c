@@ -208,7 +208,7 @@ i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK){
 i2c_err_t   I2C_Start(const i2c_desc_t *pi2c){
     *pi2c->pI2CxCON |= SEN_MASK;                    /**< Generate START condition    */
     WaitIFS();                                      /**< Wait end of START condition */
-    ClrIFS()                                        /**< Clear IFS bit  */
+    ClrIFS();                                       /**< Clear IFS bit  */
     return I2C_OK;
 }
 //------------------------------------------------------------------------------        
@@ -222,7 +222,7 @@ i2c_err_t   I2C_Stop(const i2c_desc_t *pi2c){
 i2c_err_t   I2C_ReStart(const i2c_desc_t *pi2c){
     *pi2c->pI2CxCON |= RSEN_MASK;                   /**< Generate RESTART condition    */
     WaitIFS();                                      /**< Wait end of RESTART condition */
-    ClrIFS()                                        /**< Clear IFS bit  */
+    ClrIFS();                                       /**< Clear IFS bit  */
     return I2C_OK;
 }
 //------------------------------------------------------------------------------
