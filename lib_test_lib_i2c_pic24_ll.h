@@ -33,8 +33,6 @@
 
 #ifdef  TEST_TSL2561
 #define TSL2561_ADDR        0x29
-
-
 #endif
 
 
