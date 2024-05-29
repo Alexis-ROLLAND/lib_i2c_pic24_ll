@@ -106,7 +106,7 @@ i2c_err_t   i2c_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t N
  * 
  * @return      I2C_OK 
  */
- i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK);
+ static i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK);
  
  /**
  * @brief       Raw sending of a byte on the bus.
@@ -117,7 +117,7 @@ i2c_err_t   i2c_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t N
  * @return      I2C_OK on success
  * @return      I2C_NO_ACK on no ack error
  */
- i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte);
+ static i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte);
 
  //-----------------------------------------------------------------------------
  /**
@@ -127,9 +127,9 @@ i2c_err_t   i2c_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t N
  * 
  * @return      I2C_OK
  */
-i2c_err_t   I2C_Start(const i2c_desc_t *pi2c);
-i2c_err_t   I2C_Stop(const i2c_desc_t *pi2c);
-i2c_err_t   I2C_ReStart(const i2c_desc_t *pi2c);
+static  i2c_err_t   I2C_Start(const i2c_desc_t *pi2c);
+static  i2c_err_t   I2C_Stop(const i2c_desc_t *pi2c);
+static  i2c_err_t   I2C_ReStart(const i2c_desc_t *pi2c);
 
 
 

@@ -173,7 +173,9 @@ i2c_err_t  i2c_write_then_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,const uint8_t 
     return I2C_OK;
 }
 //----------------------------------------------------------------------------
-i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte){
+//  Low Level Functions - Not part of the API
+//----------------------------------------------------------------------------
+static  i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte){
     *(pi2c->pI2CxTRN) = Byte;       /**<    Chargement registre d'émission  */
      
     WaitIFS();                                              /**<     Attente fin émission   */
@@ -187,7 +189,7 @@ i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte){
     
 }
 //----------------------------------------------------------------------------
-i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK){
+static i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK){
     if (EtatACK == I2C_SET_ACK) (*(pi2c->pI2CxCON) &= ~ACKDT_MASK);     /**< Set ACK to be generated  */
     else                        (*(pi2c->pI2CxCON) |= ACKDT_MASK);      /**< Set NACK to be generated  */
     
@@ -205,21 +207,21 @@ i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK){
     return I2C_OK;
 }
 //----------------------------------------------------------------------------
-i2c_err_t   I2C_Start(const i2c_desc_t *pi2c){
+static  i2c_err_t   I2C_Start(const i2c_desc_t *pi2c){
     *pi2c->pI2CxCON |= SEN_MASK;                    /**< Generate START condition    */
     WaitIFS();                                      /**< Wait end of START condition */
     ClrIFS();                                       /**< Clear IFS bit  */
     return I2C_OK;
 }
 //------------------------------------------------------------------------------        
-i2c_err_t   I2C_Stop(const i2c_desc_t *pi2c){
+static  i2c_err_t   I2C_Stop(const i2c_desc_t *pi2c){
     *pi2c->pI2CxCON |= PEN_MASK;                    /**< Generate STOP condition    */
     WaitIFS();                                      /**< Wait end of STOP condition */
     ClrIFS();                                       /**< Clear IFS bit  */
     return I2C_OK;
 }
 //------------------------------------------------------------------------------
-i2c_err_t   I2C_ReStart(const i2c_desc_t *pi2c){
+static  i2c_err_t   I2C_ReStart(const i2c_desc_t *pi2c){
     *pi2c->pI2CxCON |= RSEN_MASK;                   /**< Generate RESTART condition    */
     WaitIFS();                                      /**< Wait end of RESTART condition */
     ClrIFS();                                       /**< Clear IFS bit  */
