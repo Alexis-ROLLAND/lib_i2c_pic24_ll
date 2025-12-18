@@ -20,7 +20,9 @@
  */
 #if defined(__PIC24FJ128GA010__) 
     #include    "lib_i2c_pic24_ll_GA0xx.h"
-#else
+#elif defined(__PIC24FJ256GA702__)
+    #include    "lib_i2c_pic24_ll_GA7xx.h"
+#else 
     #error "Specific target not supported yet."
 #endif
 
@@ -106,7 +108,7 @@ i2c_err_t   i2c_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t N
  * 
  * @return      I2C_OK 
  */
- static i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK);
+ i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK);
  
  /**
  * @brief       Raw sending of a byte on the bus.
@@ -117,7 +119,7 @@ i2c_err_t   i2c_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t N
  * @return      I2C_OK on success
  * @return      I2C_NO_ACK on no ack error
  */
- static i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte);
+ i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte);
 
  //-----------------------------------------------------------------------------
  /**
@@ -127,9 +129,9 @@ i2c_err_t   i2c_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,uint8_t *pByte,uint8_t N
  * 
  * @return      I2C_OK
  */
-static  i2c_err_t   I2C_Start(const i2c_desc_t *pi2c);
-static  i2c_err_t   I2C_Stop(const i2c_desc_t *pi2c);
-static  i2c_err_t   I2C_ReStart(const i2c_desc_t *pi2c);
+ i2c_err_t   I2C_Start(const i2c_desc_t *pi2c);
+ i2c_err_t   I2C_Stop(const i2c_desc_t *pi2c);
+ i2c_err_t   I2C_ReStart(const i2c_desc_t *pi2c);
 
 
 

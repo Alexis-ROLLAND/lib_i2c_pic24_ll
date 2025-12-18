@@ -8,6 +8,7 @@
 #ifndef	__LIB_I2C_PIC24_LL_COMMON_TYPES_H__
 #define	__LIB_I2C_PIC24_LL_COMMON_TYPES_H__
 #include <xc.h>
+#include <stdint.h>
 
 #ifndef REG_ADDR_TYPE
 #define REG_ADDR_TYPE
