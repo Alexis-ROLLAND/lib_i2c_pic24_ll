@@ -5,7 +5,8 @@
  * @brief 	Low level library for I2C / PIC24 (Multi Target) - common Header file
  *          V3 - 05/2024 
  *          Supported Targets are (name and support status) : 
- *                  PIC24FJ128GFA010 - Fully tested
+ *                  PIC24FJ128GA010 - Fully tested
+ *                  PIC24FJ256GA702 - currently being tested
  *                  PIC24FV16KM202 - currently being tested
  */
 

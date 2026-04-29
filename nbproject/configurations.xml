@@ -8,6 +8,7 @@
       <itemPath>lib_test_lib_i2c_pic24_ll.h</itemPath>
       <itemPath>lib_i2c_pic24_ll_GA0xx.h</itemPath>
       <itemPath>lib_i2c_pic24_ll_common_types.h</itemPath>
+      <itemPath>lib_i2c_pic24_ll_GA7xx.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -34,10 +35,10 @@
     <conf name="default" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <targetDevice>PIC24FJ128GA010</targetDevice>
+        <targetDevice>PIC24FJ256GA702</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PKOBSKDEPlatformTool</platformTool>
+        <platformTool>pk4hybrid</platformTool>
         <languageToolchain>XC16</languageToolchain>
         <languageToolchainVersion>2.10</languageToolchainVersion>
         <platform>3</platform>

@@ -12,10 +12,9 @@
 /* Déclarations des variables globales 	*/
 
 /*	Implémentation du code */
-i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c)
-{
+i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c){
     uint16_t    tmpReg;
-    
+        
     switch(i2c_id){
         case _I2C1:
             pI2c->pI2CxBRG = (regAddr)&I2C1BRG;
@@ -50,7 +49,6 @@ i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c)
     /**
      * I2CCON Register
      */
-    
     tmpReg = 0x0000;
     tmpReg |= I2CEN_MASK;       /**<     I2CEN  */
     *(pI2c->pI2CxCON) = tmpReg;
@@ -61,14 +59,6 @@ i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c)
     tmpReg = 0x0000;
     *(pI2c->pI2CxSTAT) = tmpReg;
     
-    
-    /**
-     * I2CCON Register
-     */
-    
-    tmpReg = 0x0000;
-    tmpReg |= I2CEN_MASK;       /**<     I2CEN  */
-    *(pI2c->pI2CxCON) = tmpReg;
     
     return I2C_OK;
 }

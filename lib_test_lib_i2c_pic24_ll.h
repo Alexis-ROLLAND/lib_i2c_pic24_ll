@@ -21,17 +21,19 @@
 #define I2C_MODULE  _I2C1
 
 
-#define TEST_BACKLIGHT
-//#define TEST_TSL2561
+#define TEST_BACKLIGHT  1
+#define TEST_TSL2561    2
 
-#ifdef TEST_BACKLIGHT
+#define CURRENT_TEST    TEST_BACKLIGHT 
+
+#if  (CURRENT_TEST == TEST_BACKLIGHT)
 #define     RGBLED_ADDR     0x62    // I2C (7bits address)
 #define     BLUE_REG        0x02
 #define     GREEN_REG       0x03
 #define     RED_REG         0x04
 #endif
 
-#ifdef  TEST_TSL2561
+#if  (CURRENT_TEST == TEST_TSL2561)
 #define TSL2561_ADDR        0x29
 #endif
 
@@ -46,6 +48,17 @@
  *
  */
 void Initialiser(void);
+
+
+/**
+ * @brief  
+ * 
+ * @param	
+ * 
+ * @return   
+ *
+ */
+void main_Task(void);
 
 /**
  * @brief  

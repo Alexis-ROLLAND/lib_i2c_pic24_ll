@@ -15,8 +15,6 @@
 typedef volatile uint16_t*    regAddr;       /**<    Alias to uint16_t*  */
 #endif
 
-
-
 typedef enum    {   
     _I2C1,      /**< Value for I2C1 module (real I2C or MSSP)   */
     _I2C2       /**< Value for I2C2 module (real I2C or MSSP)   */

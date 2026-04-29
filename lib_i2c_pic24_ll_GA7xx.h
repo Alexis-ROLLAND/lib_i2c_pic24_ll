@@ -21,6 +21,7 @@
  * @ATTENTION : Do not forget to set SDA & SCL lines as GPIO inputs
  *              before the i2c_init call.
  *              /!\ SDA line must be configured as digital line (ANS register)
+ *              Be carefull at the #pragma config ALTI2C1 = ALTI2CEN  
  */
 
 #ifndef	__LIB_I2C_PIC24_LL_GA7XX_H__
@@ -47,10 +48,12 @@
 #define KHZ400_MHZ8     8      /**<    400 kHz with Osc 16 MHz     */
 #define KHZ400_MHZ4     3       /**<    400 kHz with Osc 8 MHz      */
 
+
 /** 
  * Masks for I2CxCON registers - Target Specific
  */
 #define I2CEN_MASK  (0x0001 << 15)  /**< I2CEN bit  */
+#define DISSLW_MASK (0x0001 << 9)   /**< DISLW bit  */
 #define ACKDT_MASK  (0x0001 << 5)   /**< ACKDT bit  */
 #define ACKEN_MASK  (0x0001 << 4)   /**< ACKEN bit  */
 #define RCEN_MASK   (0x0001 << 3)   /**< RCEN bit  */
@@ -73,7 +76,10 @@
  */
 #define ClrIFS()    {*(pi2c->pIFSREG) &= ~pi2c->IFS_MASK;}  /**< Clears the IFS bit */
 #define WaitIFS()   {while(!(*(pi2c->pIFSREG) & pi2c->IFS_MASK));}  /**< Wait for the IFS bit to be set (end of action) */
-          
+
+#define EnableSlewRateControl {*(pi2c->pI2CxCON) &= ~DISSLW_MASK;}
+#define DisableSlewRateControl {*(pi2c->pI2CxCON) |= DISSLW_MASK;}
+
 /** 
  * Type i2c_desc_t 
  */
