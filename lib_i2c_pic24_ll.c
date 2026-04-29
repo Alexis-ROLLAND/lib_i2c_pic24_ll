@@ -50,6 +50,7 @@ i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c)
     /**
      * I2CCON Register
      */
+    
     tmpReg = 0x0000;
     tmpReg |= I2CEN_MASK;       /**<     I2CEN  */
     *(pI2c->pI2CxCON) = tmpReg;
@@ -59,6 +60,15 @@ i2c_err_t   i2c_init(i2c_id_t i2c_id, i2c_config_t* pI2cCFG, i2c_desc_t *pI2c)
      */
     tmpReg = 0x0000;
     *(pI2c->pI2CxSTAT) = tmpReg;
+    
+    
+    /**
+     * I2CCON Register
+     */
+    
+    tmpReg = 0x0000;
+    tmpReg |= I2CEN_MASK;       /**<     I2CEN  */
+    *(pI2c->pI2CxCON) = tmpReg;
     
     return I2C_OK;
 }
@@ -178,12 +188,13 @@ i2c_err_t  i2c_write_then_read(i2c_desc_t *pi2c, uint8_t i2c_Addr,const uint8_t 
 i2c_err_t  I2C_PutByte(i2c_desc_t *pi2c, uint8_t Byte){
     *(pi2c->pI2CxTRN) = Byte;       /**<    Chargement registre d'émission  */
      
-    WaitIFS();                                              /**<     Attente fin émission   */
+    WaitIFS();      /**<     Attente fin émission   */ 
+    ClrIFS();   
     if ((*(pi2c->pI2CxSTAT) & ACKSTAT_MASK) != 0){          /**<     Check ACK  */                                    
                 I2C_Stop(pi2c);
                 return I2C_NO_ACK;
     }
-    ClrIFS();                                               /**<    Raz Flag    */
+                                                  /**<    Raz Flag    */
     
     return I2C_OK;
     
@@ -209,6 +220,9 @@ i2c_err_t  I2C_GetByte(i2c_desc_t *pi2c, uint8_t *pByte, set_ack_t EtatACK){
 //----------------------------------------------------------------------------
 i2c_err_t   I2C_Start(const i2c_desc_t *pi2c){
     *pi2c->pI2CxCON |= SEN_MASK;                    /**< Generate START condition    */
+    //uint16_t dummy;
+    //dummy = *pi2c->pI2CxBRG;
+    //I2C1CONLbits.SEN = 1;
     WaitIFS();                                      /**< Wait end of START condition */
     ClrIFS();                                       /**< Clear IFS bit  */
     return I2C_OK;

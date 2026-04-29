@@ -17,6 +17,10 @@
  * 
  *              PIC24FJ64GA702 - Not tested
  *              PIC24FJ128GA702 - Not tested
+ * 
+ * @ATTENTION : Do not forget to set SDA & SCL lines as GPIO inputs
+ *              before the i2c_init call.
+ *              /!\ SDA line must be configured as digital line (ANS register)
  */
 
 #ifndef	__LIB_I2C_PIC24_LL_GA7XX_H__
@@ -33,6 +37,15 @@
 #define I2C1CON     I2C1CONL
 #define I2C2CON     I2C2CONL
 
+/**
+ * Defines for classical BRG Values
+ */
+#define KHZ100_MHZ16    78     /**<    100 kHz with Osc 32 MHz     */
+#define KHZ100_MHZ8     38      /**<    100 kHz with Osc 16 MHz     */ 
+#define KHZ100_MHZ4     18      /**<    100 kHz with Osc 8 MHz      */
+#define KHZ400_MHZ16    18      /**<    400 kHz with Osc 32 MHz     */
+#define KHZ400_MHZ8     8      /**<    400 kHz with Osc 16 MHz     */
+#define KHZ400_MHZ4     3       /**<    400 kHz with Osc 8 MHz      */
 
 /** 
  * Masks for I2CxCON registers - Target Specific
@@ -60,9 +73,6 @@
  */
 #define ClrIFS()    {*(pi2c->pIFSREG) &= ~pi2c->IFS_MASK;}  /**< Clears the IFS bit */
 #define WaitIFS()   {while(!(*(pi2c->pIFSREG) & pi2c->IFS_MASK));}  /**< Wait for the IFS bit to be set (end of action) */
-
-     
-   
           
 /** 
  * Type i2c_desc_t 

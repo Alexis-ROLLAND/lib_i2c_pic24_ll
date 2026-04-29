@@ -12,19 +12,10 @@
 
 #ifndef REG_ADDR_TYPE
 #define REG_ADDR_TYPE
-typedef uint16_t*    regAddr;       /**<    Alias to uint16_t*  */
+typedef volatile uint16_t*    regAddr;       /**<    Alias to uint16_t*  */
 #endif
 
-/**
- * Defines for classical BRG Values
- */
-#define KHZ100_MHZ16    157     /**<    100 kHz with Osc 32 MHz     */
-#define KHZ100_MHZ8     78      /**<    100 kHz with Osc 16 MHz     */ 
-#define KHZ100_MHZ4     39      /**<    100 kHz with Osc 8 MHz      */
-#define KHZ400_MHZ16    37      /**<    400 kHz with Osc 32 MHz     */
-#define KHZ400_MHZ8     18      /**<    400 kHz with Osc 16 MHz     */
-#define KHZ400_MHZ4     9       /**<    400 kHz with Osc 8 MHz      */
-#define KHZ400_MHZ2     4       /**<    400 kHz with Osc 4 MHz      */
+
 
 typedef enum    {   
     _I2C1,      /**< Value for I2C1 module (real I2C or MSSP)   */

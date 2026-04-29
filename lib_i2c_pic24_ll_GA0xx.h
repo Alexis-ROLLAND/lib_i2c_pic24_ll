@@ -24,6 +24,18 @@
 
 #include "lib_i2c_pic24_ll_common_types.h"
 
+
+/**
+ * Defines for classical BRG Values
+ */
+#define KHZ100_MHZ16    157     /**<    100 kHz with Osc 32 MHz     */
+#define KHZ100_MHZ8     78      /**<    100 kHz with Osc 16 MHz     */ 
+#define KHZ100_MHZ4     39      /**<    100 kHz with Osc 8 MHz      */
+#define KHZ400_MHZ16    37      /**<    400 kHz with Osc 32 MHz     */
+#define KHZ400_MHZ8     18      /**<    400 kHz with Osc 16 MHz     */
+#define KHZ400_MHZ4     9       /**<    400 kHz with Osc 8 MHz      */
+#define KHZ400_MHZ2     4       /**<    400 kHz with Osc 4 MHz      */
+
 /** 
  * Masks for I2CxCON registers - Target Specific
  */
